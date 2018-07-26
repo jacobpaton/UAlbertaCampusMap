@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
 import 'package:ualberta_campus_map/Feature.dart';
+import 'package:ualberta_campus_map/Campus.dart';
 import 'package:ualberta_campus_map/campus_locations/north_campus_locations.dart';
 import 'package:ualberta_campus_map/campus_locations/south_campus_locations.dart';
 import 'package:ualberta_campus_map/campus_locations/stjean_locations.dart';
@@ -14,6 +15,8 @@ class CampusMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      color: Colors.green,
       title: "UAlberta Campus Map",
       home: MapPage(),
     );
@@ -27,8 +30,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage>{
   //  Campus name list, current campus, current location
-  static final List<Feature> campuses = <Feature>[NorthCampusLocations.northCampus, SouthCampusLocations.southCampus, AugustanaLocations.augustanaCampus, StJeanLocations.stJean];
-  Feature cCampus = campuses[0];
+  static final List<Campus> campuses = <Campus>[NorthCampusLocations.northCampus, SouthCampusLocations.southCampus, AugustanaLocations.augustanaCampus, StJeanLocations.stJean];
+  Campus cCampus = campuses[0];
   Location loc = Location();
 
   static MapController controller = MapController();
@@ -56,9 +59,25 @@ class _MapPageState extends State<MapPage>{
 
         ),
         Marker(
-          point: NorthCampusLocations.listerCentre.getPos(),
-          builder: (_) => Icon(Icons.home, size: 35.0, color: Colors.amber,),
-        )
+          point: NorthCampusLocations.features[0].getPos(),
+          builder: (_) => Icon(Icons.location_city, size: 30.0, color: Colors.amber,),
+        ),
+        Marker(
+          point: NorthCampusLocations.features[1].getPos(),
+          builder: (_) => Icon(Icons.business, size: 30.0, color: Colors.amber,),
+        ),
+        Marker(
+          point: SouthCampusLocations.southCampus.getPos(),
+          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+        ),
+        Marker(
+          point: AugustanaLocations.augustanaCampus.getPos(),
+          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+        ),
+        Marker(
+          point: StJeanLocations.stJean.getPos(),
+          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+        ),
       ])
     ]
   );
@@ -71,7 +90,7 @@ class _MapPageState extends State<MapPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("UAlberta Campus Map")),
+      appBar: AppBar(title: Text("UAlberta Campus Map",), backgroundColor: Colors.green,),
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
@@ -97,6 +116,7 @@ class _MapPageState extends State<MapPage>{
                     setState(() {
                       cCampus = newCampus;
                       controller.move(cCampus.getPos(), cCampus.getZoom());
+                      Navigator.pop(context);
                     });
                   },
                   items: campuses.map((Feature campus) {
@@ -106,19 +126,41 @@ class _MapPageState extends State<MapPage>{
                     );
                   }).toList(),
                 ),
+                Container(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: IconButton(
+                    icon: Icon(Icons.location_searching),
+                    onPressed: (){
+                      controller.move(cCampus.getPos(), cCampus.getZoom());
+                      Navigator.pop(context);
+                    },
+                    tooltip: 'Centre map on current campus.',
+                  ),
+                ),
               ],
+            ),
+            Container(
+              padding: const EdgeInsets.all(15.0),
+              child: Text("Locations on campus:", style: TextStyle(fontWeight: FontWeight.bold),),
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 40.0),
+              child: null,
+              // TODO: display campus features here
             ),
           ],
         ),
       ),
 
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            loc.getLocation.then((currentLocation){
-              double lat = currentLocation['latitude'];
-              double lng = currentLocation['longitude'];
-              controller.move(LatLng(lat, lng), 16.0);
-            });
+        backgroundColor: Colors.green,
+        tooltip: 'Center map on your location.',
+        onPressed: () {
+           loc.getLocation.then((currentLocation){
+            double lat = currentLocation['latitude'];
+            double lng = currentLocation['longitude'];
+            controller.move(LatLng(lat, lng), 16.0);
+           });
           },
           child: Icon(Icons.my_location),
       ),
