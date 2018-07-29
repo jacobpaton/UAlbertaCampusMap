@@ -28,11 +28,14 @@ class MapPage extends StatefulWidget {
   createState() => _MapPageState();
 }
 
+// TODO: Refactor code to ease navigation of code
 class _MapPageState extends State<MapPage>{
   //  Campus name list, current campus, current location
   static final List<Campus> campuses = <Campus>[NorthCampusLocations.northCampus, SouthCampusLocations.southCampus, AugustanaLocations.augustanaCampus, StJeanLocations.stJean];
   Campus cCampus = campuses[0];
   Location loc = Location();
+  Text avail;
+  Text notAvail = Text("Sorry! This campus is not yet supported.", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold,),);
 
   static MapController controller = MapController();
   FlutterMap map = FlutterMap(
@@ -52,10 +55,30 @@ class _MapPageState extends State<MapPage>{
           'id': 'mapbox.streets',
         }
       ),
+      // TODO: Change to dynamically add markers from Feature list instead of hard-coding
       MarkerLayerOptions(markers: [
         Marker(
           point: NorthCampusLocations.northCampus.getPos(),
-          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+          builder: (context) => GestureDetector(
+            child: Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+            onTap: () {
+              showModalBottomSheet(context: context, builder: (_) {
+                return Container(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.blur_circular),
+                      title: Text("North Campus"),
+                    ),
+                    ListTile(
+                      title: Text("Main Campus"),
+                    ),
+                  ],),
+                );
+              });
+            }
+            // TODO: Add additional info (and formatting of modal)
+          ),
 
         ),
         Marker(
@@ -116,7 +139,12 @@ class _MapPageState extends State<MapPage>{
                     setState(() {
                       cCampus = newCampus;
                       controller.move(cCampus.getPos(), cCampus.getZoom());
-                      Navigator.pop(context);
+                      if(cCampus.getAvail()){
+                        avail = null;
+                        Navigator.pop(context);
+                      } else {
+                        avail = notAvail;
+                      }
                     });
                   },
                   items: campuses.map((Feature campus) {
@@ -138,6 +166,10 @@ class _MapPageState extends State<MapPage>{
                   ),
                 ),
               ],
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 15.0, top: 5.0),
+              child: avail,
             ),
             Container(
               padding: const EdgeInsets.all(15.0),
