@@ -60,19 +60,35 @@ class _MapPageState extends State<MapPage>{
         Marker(
           point: NorthCampusLocations.northCampus.getPos(),
           builder: (context) => GestureDetector(
-            child: Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+            child: Icon(Icons.account_balance, size: 30.0, color: Colors.green,),
             onTap: () {
               showModalBottomSheet(context: context, builder: (_) {
+                // TODO: Create modal content class
                 return Container(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(children: <Widget>[
                     ListTile(
-                      leading: Icon(Icons.blur_circular),
-                      title: Text("North Campus"),
+                      leading: Icon(Icons.info),
+                      title: Text("North Campus", style: TextStyle(fontWeight: FontWeight.bold,),),
+                      subtitle: Text("Edmonton, AB"),
+                      // TODO: Implement favourite system
+                      trailing: Icon(Icons.favorite_border),
+                      onTap: (){print("yikes");},
                     ),
                     ListTile(
-                      title: Text("Main Campus"),
+                      title: Text("The original campus that blends the historic with cutting" +
+                          " edge: University of Alberta's North Campus is located in the province’s " +
+                          "capital of Edmonton, on the edge of the North Saskatchewan River valley. " +
+                          "It covers 50 city blocks, with abundant green spaces among its 150 buildings."),
                     ),
+                    ListTile(
+                      leading: Icon(Icons.access_time),
+                      title: Text("Hours: 9:00 am - 10:00 pm"),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.apps),
+                      title: Text("Type:   Campus"),
+                    )
                   ],),
                 );
               });
@@ -91,15 +107,15 @@ class _MapPageState extends State<MapPage>{
         ),
         Marker(
           point: SouthCampusLocations.southCampus.getPos(),
-          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+          builder: (_) => Icon(Icons.account_balance, size: 30.0, color: Colors.green,),
         ),
         Marker(
           point: AugustanaLocations.augustanaCampus.getPos(),
-          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+          builder: (_) => Icon(Icons.account_balance, size: 30.0, color: Colors.green,),
         ),
         Marker(
           point: StJeanLocations.stJean.getPos(),
-          builder: (_) => Icon(Icons.location_on, size: 35.0, color: Colors.green,),
+          builder: (_) => Icon(Icons.account_balance, size: 30.0, color: Colors.green,),
         ),
       ])
     ]
